@@ -1,10 +1,7 @@
-package demo.order;
+package demo.mysql;
 
-import javax.persistence.EntityManagerFactory;
-
-import demo.order.domain.Order;
+import demo.mysql.domain.Mysql;
 import org.apache.tomcat.jdbc.pool.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -20,42 +17,44 @@ import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
+import javax.persistence.EntityManagerFactory;
+
 @Configuration
 @EnableJpaRepositories(
-		entityManagerFactoryRef = "orderEntityManager",
-		transactionManagerRef = "orderTransactionManager",
-		basePackageClasses = Order.class)
-public class OrderConfig {
+		entityManagerFactoryRef = "mysqlEntityManager",
+		transactionManagerRef = "mysqlTransactionManager",
+		basePackageClasses = Mysql.class)
+public class MysqlConfig {
 
 	@Autowired(required = false)
 	private PersistenceUnitManager persistenceUnitManager;
 
 	@Bean
-	@ConfigurationProperties("app.order.jpa")
-	public JpaProperties orderJpaProperties() {
+	@ConfigurationProperties("app.my.jpa")
+	public JpaProperties mysqlJpaProperties() {
 		return new JpaProperties();
 	}
 
 	@Bean
-	@ConfigurationProperties(prefix = "app.order.datasource")
-	public DataSource orderDataSource() {
+	@ConfigurationProperties(prefix = "app.my.datasource")
+	public DataSource mysqlDataSource() {
 		return (DataSource) DataSourceBuilder.create().type(DataSource.class).build();
 	}
 
 	@Bean
-	public LocalContainerEntityManagerFactoryBean orderEntityManager(
-			JpaProperties orderJpaProperties) {
-		EntityManagerFactoryBuilder builder = createEntityManagerFactoryBuilder(orderJpaProperties);
+	public LocalContainerEntityManagerFactoryBean mysqlEntityManager(
+			JpaProperties mysqlJpaProperties) {
+		EntityManagerFactoryBuilder builder = createEntityManagerFactoryBuilder(mysqlJpaProperties);
 		return builder
-				.dataSource(orderDataSource())
-				.packages(Order.class)
-				.persistenceUnit("ordersDs")
+				.dataSource(mysqlDataSource())
+				.packages(Mysql.class)
+				.persistenceUnit("mysqlDs")
 				.build();
 	}
 
 	@Bean
-	public JpaTransactionManager orderTransactionManager(EntityManagerFactory orderEntityManager) {
-		return new JpaTransactionManager(orderEntityManager);
+	public JpaTransactionManager mysqlTransactionManager(EntityManagerFactory mysqlEntityManager) {
+		return new JpaTransactionManager(mysqlEntityManager);
 	}
 
 	private EntityManagerFactoryBuilder createEntityManagerFactoryBuilder(JpaProperties customerJpaProperties) {

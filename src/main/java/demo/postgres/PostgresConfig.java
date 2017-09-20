@@ -1,10 +1,7 @@
-package demo.customer;
+package demo.postgres;
 
-import javax.persistence.EntityManagerFactory;
-
-import demo.customer.domain.Customer;
+import demo.postgres.domain.Postgres;
 import org.apache.tomcat.jdbc.pool.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -21,50 +18,52 @@ import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
+import javax.persistence.EntityManagerFactory;
+
 @Configuration
 @EnableJpaRepositories(
-		entityManagerFactoryRef = "customerEntityManager",
-		transactionManagerRef = "customerTransactionManager",
-		basePackageClasses = Customer.class)
-public class CustomerConfig {
+		entityManagerFactoryRef = "postgresEntityManager",
+		transactionManagerRef = "postgresTransactionManager",
+		basePackageClasses = Postgres.class)
+public class PostgresConfig {
 
 	@Autowired(required = false)
 	private PersistenceUnitManager persistenceUnitManager;
 
 	@Bean
-	@ConfigurationProperties("app.customer.jpa")
-	public JpaProperties customerJpaProperties() {
+	@ConfigurationProperties("app.pg.jpa")
+	public JpaProperties postgresJpaProperties() {
 		return new JpaProperties();
 	}
 
 	@Bean
 	@Primary
-	@ConfigurationProperties(prefix = "app.customer.datasource")
-	public DataSource customerDataSource() {
+	@ConfigurationProperties(prefix = "app.pg.datasource")
+	public DataSource postgresDataSource() {
 		return (DataSource) DataSourceBuilder.create().type(DataSource.class).build();
 	}
 
 	@Bean
-	public LocalContainerEntityManagerFactoryBean customerEntityManager(
-			JpaProperties customerJpaProperties) {
-		EntityManagerFactoryBuilder builder = createEntityManagerFactoryBuilder(customerJpaProperties);
+	public LocalContainerEntityManagerFactoryBean postgresEntityManager(
+			JpaProperties postgresJpaProperties) {
+		EntityManagerFactoryBuilder builder = createEntityManagerFactoryBuilder(postgresJpaProperties);
 		return builder
-				.dataSource(customerDataSource())
-				.packages(Customer.class)
-				.persistenceUnit("customersDs")
+				.dataSource(postgresDataSource())
+				.packages(Postgres.class)
+				.persistenceUnit("postgresDs")
 				.build();
 	}
 
 	@Bean
 	@Primary
-	public JpaTransactionManager customerTransactionManager(EntityManagerFactory customerEntityManager) {
-		return new JpaTransactionManager(customerEntityManager);
+	public JpaTransactionManager postgresTransactionManager(EntityManagerFactory postgresEntityManager) {
+		return new JpaTransactionManager(postgresEntityManager);
 	}
 
-	private EntityManagerFactoryBuilder createEntityManagerFactoryBuilder(JpaProperties customerJpaProperties) {
-		JpaVendorAdapter jpaVendorAdapter = createJpaVendorAdapter(customerJpaProperties);
+	private EntityManagerFactoryBuilder createEntityManagerFactoryBuilder(JpaProperties postgresJpaProperties) {
+		JpaVendorAdapter jpaVendorAdapter = createJpaVendorAdapter(postgresJpaProperties);
 		return new EntityManagerFactoryBuilder(jpaVendorAdapter,
-				customerJpaProperties.getProperties(), this.persistenceUnitManager);
+				postgresJpaProperties.getProperties(), this.persistenceUnitManager);
 	}
 
 	private JpaVendorAdapter createJpaVendorAdapter(JpaProperties jpaProperties) {

@@ -1,32 +1,28 @@
-package demo.order.domain;
-
-import java.util.Date;
+package demo.mysql.domain;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class OrderTest {
+public class MysqlTest {
 
 	@Autowired
-	private OrderRepository orderRepository;
+	private MysqlRepository mysqlRepository;
 
 	@Test
 	public void save() {
-		Order order = new Order();
-		order.setCustomerId(123L);
-		order.setOrderDate(new Date());
-		assertThat(order.getId(), is(nullValue()));
-		this.orderRepository.save(order);
-		assertThat(order.getId(), is(not(nullValue())));
+		Mysql mysql = new Mysql();
+		mysql.setName("Alternate-Mysql");
+		assertThat(mysql.getId(), is(nullValue()));
+		this.mysqlRepository.save(mysql);
+		assertThat(mysql.getId(), is(not(nullValue())));
 	}
 
 }

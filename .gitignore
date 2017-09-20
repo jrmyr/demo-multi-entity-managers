@@ -1,5 +1,9 @@
+# folders
 .idea
-*.iml
-*.ipr
-*.iws
 target
+out
+
+# files
+docker/*.sql
+*.iml
+.DS_Store
